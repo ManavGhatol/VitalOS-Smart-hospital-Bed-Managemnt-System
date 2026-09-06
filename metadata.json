@@ -1,0 +1,6 @@
+{
+  "name": "Vitalis OS",
+  "description": "Intelligent role-based healthcare platform featuring conversational AI triage, doctor emergency bed reallocation, and live administrative monitoring.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

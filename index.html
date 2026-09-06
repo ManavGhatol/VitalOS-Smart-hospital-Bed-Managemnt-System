@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Polyfill fetch setter on window & Window.prototype to prevent
+      // "Cannot set property fetch of #<Window> which has only a getter"
+      // in sandboxed iframes or environments with getter-only fetch.
+      (function() {
+        try {
+          var realFetch = window.fetch;
+          var activeFetch = typeof realFetch === 'function' ? realFetch.bind(window) : realFetch;
+
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            var protoDesc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
+            if (protoDesc && !protoDesc.set && protoDesc.configurable) {
+              Object.defineProperty(Window.prototype, 'fetch', {
+                get: function() {
+                  return activeFetch;
+                },
+                set: function(fn) {
+                  activeFetch = fn;
+                },
+                configurable: true,
+                enumerable: true
+              });
+            }
+          }
+
+          var winDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
+          if (!winDesc || (!winDesc.set && winDesc.configurable !== false)) {
+            Object.defineProperty(window, 'fetch', {
+              get: function() {
+                return activeFetch;
+              },
+              set: function(fn) {
+                activeFetch = fn;
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
+        } catch (e) {
+          // Gracefully continue
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vitalis OS</title>
+    <meta name="description" content="Intelligent role-based healthcare platform featuring conversational AI triage, doctor emergency bed reallocation, and live administrative monitoring." />
+    <meta property="og:title" content="Vitalis OS" />
+    <meta property="og:description" content="Intelligent role-based healthcare platform featuring conversational AI triage, doctor emergency bed reallocation, and live administrative monitoring." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
